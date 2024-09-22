@@ -1,9 +1,8 @@
-import { Container, Row, Col } from 'react-bootstrap';
+import { Container, Row, Col, Alert } from 'react-bootstrap';
 import React, { useState, useEffect } from 'react';
 import { AddTodoItem, TodoItems, Footer, Header } from '../components';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchTodosRequest } from '../redux/todosSlice';
-
+import { fetchTodosRequest, createTodoRequest, updateTodoRequest, deleteTodoRequest } from '../redux/todosSlice';
 const Todo = () => {
   const dispatch = useDispatch();
   const { list, loading, error } = useSelector((state) => state.todos);
@@ -14,57 +13,52 @@ const Todo = () => {
   }, [dispatch]);
 
   const handleDescriptionChange = (event) => {
-    // todo
+    setDescription(event.target.value);
   };
 
-  async function getItems() {
-    try {
-      alert('todo');
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  async function handleAdd() {
-    try {
-      alert('todo');
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  function handleClear() {
+  const handleAdd = () => {
+    dispatch(createTodoRequest({ description }));
     setDescription('');
-  }
+  };
 
-  async function handleMarkAsComplete(item) {
-    try {
-      alert('todo');
-    } catch (error) {
-      console.error(error);
-    }
-  }
+  const handleClear = () => {
+    setDescription('');
+  };
+
+  const handleMarkAsComplete = (item) => {
+    dispatch(updateTodoRequest({ id: item.id, data: { ...item, completed: true } }));
+  };
+
+  const handleDelete = (id) => {
+    dispatch(deleteTodoRequest(id));
+  };
 
   return (
     <div className="App">
       <Header />
       <Container>
-        <Row>
-          <Col>
-            <AddTodoItem
-              description={description}
-              handleDescriptionChange={handleDescriptionChange}
-              handleAdd={handleAdd}
-              handleClear={handleClear}
-            />
-          </Col>
-        </Row>
-        <br />
-        <Row>
-          <Col>
-            <TodoItems items={list} getItems={getItems} handleMarkAsComplete={handleMarkAsComplete} />
-          </Col>
-        </Row>
+        {loading && <div>Loading...</div>}
+        {error && <Alert variant="danger">{error}</Alert>}
+        {!loading && !error && (
+          <>
+            <Row>
+              <Col>
+                <AddTodoItem
+                  description={description}
+                  handleDescriptionChange={handleDescriptionChange}
+                  handleAdd={handleAdd}
+                  handleClear={handleClear}
+                />
+              </Col>
+            </Row>
+            <br />
+            <Row>
+              <Col>
+                <TodoItems items={list} handleMarkAsComplete={handleMarkAsComplete} handleDelete={handleDelete} />
+              </Col>
+            </Row>
+          </>
+        )}
       </Container>
       <Footer />
     </div>
