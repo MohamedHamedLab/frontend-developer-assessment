@@ -25,9 +25,15 @@ const TodoItems = ({ items, getItems, handleMarkAsComplete }) => {
               <td>{item.id}</td>
               <td>{item.description}</td>
               <td>
-                <Button variant="warning" size="sm" onClick={() => handleMarkAsComplete(item)}>
-                  Mark as completed
-                </Button>
+                {item.completed ? (
+                  <Button variant="success" size="sm" disabled>
+                    Completed
+                  </Button>
+                ) : (
+                  <Button variant="warning" size="sm" onClick={() => handleMarkAsComplete(item)}>
+                    Mark as completed
+                  </Button>
+                )}
               </td>
             </tr>
           ))}
